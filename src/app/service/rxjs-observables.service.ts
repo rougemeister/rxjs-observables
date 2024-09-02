@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { of, from, interval, Observable } from 'rxjs';
-import { take, catchError } from 'rxjs/operators';
+import { concat, of, from, interval, Observable } from 'rxjs';
+import { take, catchError, map, debounceTime } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +18,7 @@ export class RxjsDemoService {
     return from(colors);
   }
 
+
   // Task 3: Using `interval`
   createIntervalObservable() {
     return interval(1000).pipe(take(5));
@@ -28,8 +29,7 @@ export class RxjsDemoService {
     const numberObs = of(10, 20, 30);
     const colorObs = from(['yellow', 'pink', 'purple']);
     console.log(numberObs)
-    // return numberObs.concat(colorObs);
-     return numberObs
+    return concat(numberObs,colorObs);
   }
 
   // Task 5: Error Handling
@@ -42,4 +42,39 @@ export class RxjsDemoService {
       catchError(err => of(`Error caught: ${err}`))
     );
   }
+
+
+
+  //Additional operation
+
+  // Custom Operator that doubles each emitted value
+  doubleValues<T>() {
+    return (source$: Observable<T>) => source$.pipe(
+      map(value => {
+        if (typeof value === 'number') {
+          return (value as any) * 2;
+        } else {
+          return value;
+        }
+      })
+    );
+  }
+
+// Using the custom operator with an observable
+useCustomOperator() {
+  const sourceObservable = of(1, 2, 3, 4, 5);
+  return sourceObservable.pipe(this.doubleValues());
+}
+
+createDebouncedIntervalObservable() {
+  return interval(1000).pipe(
+    debounceTime(500),  // 500ms debounce
+    take(5)
+  );
+}
+
+
+
+
+
 }
