@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RxjsDemoService } from '../../service/rxjs-observables.service';
+import { Component, OnInit } from '@angular/core';
+import { RxjsDemoService} from '../../service/rxjs-observables.service';
 
 @Component({
   selector: 'app-rxjs-observables',
@@ -8,7 +8,10 @@ import { RxjsDemoService } from '../../service/rxjs-observables.service';
   templateUrl: './rxjs-observables.component.html',
   styleUrl: './rxjs-observables.component.scss'
 })
-export class RxjsObservablesComponent {
+export class RxjsObservablesComponent implements OnInit {
+
+  doubledValues: number[] = [];
+  debouncedValues: number[] = [];
   constructor(private rxjsDemoService: RxjsDemoService) {}
 
   ngOnInit() {
@@ -46,5 +49,29 @@ export class RxjsObservablesComponent {
       error => console.log('Caught error:', error),
       () => console.log('Error Observable complete')
     );
+
+
+
+    //Additional Operations
+
+    this.rxjsDemoService.useCustomOperator().subscribe(
+      value => this.doubledValues.push(value as number),
+      error => console.error('Error:', error),
+      () => console.log('Custom Operator Observable complete')
+    );
+
+    // Subscribe to the debounced interval observable
+    this.rxjsDemoService.createDebouncedIntervalObservable().subscribe(
+      value => this.debouncedValues.push(value),
+      error => console.error('Error:', error),
+      () => console.log('Debounced Interval Observable complete')
+    );
   }
-}
+
+
+
+    
+  }
+
+
+  
